@@ -19,7 +19,8 @@ export function EditorPanel({
   editorRef,
   onSelectionChange,
 }: EditorPanelProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const txtInputRef = useRef<HTMLInputElement>(null)
+  const docxInputRef = useRef<HTMLInputElement>(null)
   const stats = useMemo(() => computeStats(text), [text])
 
   const handlePaste = async () => {
@@ -37,8 +38,6 @@ export function EditorPanel({
     toast.success('Editor limpo.')
   }
 
-  const handleImport = () => fileInputRef.current?.click()
-
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -50,16 +49,6 @@ export function EditorPanel({
       toast.error('Erro ao importar arquivo.')
     }
     e.target.value = ''
-  }
-
-  const handleExportTxt = () => {
-    exportTxt('scriptwise-texto', text)
-    toast.success('TXT exportado!')
-  }
-
-  const handleExportDocx = () => {
-    exportDocx('scriptwise-texto', text)
-    toast.success('DOCX exportado!')
   }
 
   const handleCopy = async () => {
@@ -82,33 +71,51 @@ export function EditorPanel({
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
         <Button variant="outline" size="sm" onClick={handlePaste}>
-          <Clipboard className="mr-1.5 h-4 w-4" />
-          Colar Texto
+          <Clipboard className="mr-1.5 h-4 w-4" /> Colar Texto
         </Button>
         <Button variant="outline" size="sm" onClick={handleClear}>
-          <Trash2 className="mr-1.5 h-4 w-4" />
-          Limpar
+          <Trash2 className="mr-1.5 h-4 w-4" /> Limpar
         </Button>
-        <Button variant="outline" size="sm" onClick={handleImport}>
-          <FileUp className="mr-1.5 h-4 w-4" />
-          Importar TXT/DOCX
+        <Button variant="outline" size="sm" onClick={() => txtInputRef.current?.click()}>
+          <FileUp className="mr-1.5 h-4 w-4" /> Importar TXT
         </Button>
-        <Button variant="outline" size="sm" onClick={handleExportTxt}>
-          <FileText className="mr-1.5 h-4 w-4" />
-          Exportar TXT
+        <Button variant="outline" size="sm" onClick={() => docxInputRef.current?.click()}>
+          <FileUp className="mr-1.5 h-4 w-4" /> Importar DOCX
         </Button>
-        <Button variant="outline" size="sm" onClick={handleExportDocx}>
-          <FileDown className="mr-1.5 h-4 w-4" />
-          Exportar DOCX
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            exportTxt('scriptwise', text)
+            toast.success('TXT exportado!')
+          }}
+        >
+          <FileText className="mr-1.5 h-4 w-4" /> Exportar TXT
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            exportDocx('scriptwise', text)
+            toast.success('DOCX exportado!')
+          }}
+        >
+          <FileDown className="mr-1.5 h-4 w-4" /> Exportar DOCX
         </Button>
         <Button variant="outline" size="sm" onClick={handleCopy}>
-          <Copy className="mr-1.5 h-4 w-4" />
-          Copiar
+          <Copy className="mr-1.5 h-4 w-4" /> Copiar
         </Button>
         <input
-          ref={fileInputRef}
+          ref={txtInputRef}
           type="file"
-          accept=".txt,.docx,.doc,.md"
+          accept=".txt,.md"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+        <input
+          ref={docxInputRef}
+          type="file"
+          accept=".docx,.doc"
           onChange={handleFileChange}
           className="hidden"
         />

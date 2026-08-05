@@ -3,10 +3,14 @@
    - This component is used in the App.tsx file to wrap the main content of the app */
 
 import { Outlet } from 'react-router-dom'
+import { Header } from '@/components/Header'
+import { useTheme } from '@/hooks/use-theme'
 
 export default function Layout() {
+  const { theme, toggleTheme } = useTheme()
   return (
     <main className="flex flex-col min-h-screen">
+      <Header theme={theme} onToggleTheme={toggleTheme} />
       <Outlet />
     </main>
   )
